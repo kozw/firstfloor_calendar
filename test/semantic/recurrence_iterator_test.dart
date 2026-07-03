@@ -447,6 +447,25 @@ void main() {
         '20270104', // Monday of week 1, 2027
       ]);
     });
+
+    test('YEARLY with BYWEEKNO and multiple BYDAY values', () {
+      final dtstart = CalDateTime.date(2025, 1, 1);
+      final rrule = RecurrenceRule(
+        freq: RecurrenceFrequency.yearly,
+        byWeekNo: {1},
+        byDay: {ByDay(Weekday.mo), ByDay(Weekday.we)},
+        count: 4,
+      );
+      final iterator = RecurrenceIterator(dtstart: dtstart, rrule: rrule);
+
+      final actual = occurrences(iterator);
+      expect(actual, [
+        '20250101', // Wednesday of week 1, 2025
+        '20251229', // Monday of week 1, 2026
+        '20251231', // Wednesday of week 1, 2026
+        '20270104', // Monday of week 1, 2027
+      ]);
+    });
   });
 
   group('RecurrenceIterator - BYHOUR/BYMINUTE/BYSECOND', () {

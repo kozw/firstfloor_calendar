@@ -224,8 +224,8 @@ class ByDayFilter extends ByRuleFilter {
           }
         }
       } else if (rrule.byWeekNo != null) {
-        // TODO: otherwise, special expand for WEEKLY if BYWEEKNO is present.
-        yield* source;
+        // otherwise, special expand for WEEKLY if BYWEEKNO is present.
+        yield* _expandWeekly(source);
       } else if (rrule.byMonth != null) {
         // otherwise, special expand for MONTHLY if BYMONTH is present.
         yield* _expandMonthly(source);
@@ -246,26 +246,7 @@ class ByDayFilter extends ByRuleFilter {
         yield* _expandMonthly(source);
       }
     } else if (rrule.freq == RecurrenceFrequency.weekly) {
-      final weekDayStart = rrule.wkst ?? Weekday.mo;
-      // sort BYDAY by weekday index where startOfWeek weekday is the first day
-      final byDay = rrule.byDay!.toList()
-        ..sort((a, b) {
-          // adjust index to startOfWeek
-          // eg. if week starts on Wed, Wed=0, Thu=1, Fri=2, Sat=3, Sun=4, Mon=5, Tue=6
-          final aIndex = (a.weekday.index - weekDayStart.index) % 7;
-          final bIndex = (b.weekday.index - weekDayStart.index) % 7;
-          return aIndex.compareTo(bIndex);
-        });
-
-      // expand to matching weekdays
-      for (final dt in source) {
-        final startOfWeek = DateUtils.startOfWeek(dt, weekDayStart);
-
-        for (final day in byDay) {
-          final index = (day.weekday.index - weekDayStart.index) % 7;
-          yield startOfWeek.add(days: index);
-        }
-      }
+      yield* _expandWeekly(source);
     } else {
       // limit only
       for (final dt in source) {
@@ -295,6 +276,29 @@ class ByDayFilter extends ByRuleFilter {
         )) {
           yield candidate;
         }
+      }
+    }
+  }
+
+  Iterable<CalDateTime> _expandWeekly(Iterable<CalDateTime> source) sync* {
+    final weekDayStart = rrule.wkst ?? Weekday.mo;
+    // sort BYDAY by weekday index where startOfWeek weekday is the first day
+    final byDay = rrule.byDay!.toList()
+      ..sort((a, b) {
+        // adjust index to startOfWeek
+        // eg. if week starts on Wed, Wed=0, Thu=1, Fri=2, Sat=3, Sun=4, Mon=5, Tue=6
+        final aIndex = (a.weekday.index - weekDayStart.index) % 7;
+        final bIndex = (b.weekday.index - weekDayStart.index) % 7;
+        return aIndex.compareTo(bIndex);
+      });
+
+    // expand to matching weekdays
+    for (final dt in source) {
+      final startOfWeek = DateUtils.startOfWeek(dt, weekDayStart);
+
+      for (final day in byDay) {
+        final index = (day.weekday.index - weekDayStart.index) % 7;
+        yield startOfWeek.add(days: index);
       }
     }
   }
