@@ -485,6 +485,24 @@ void main() {
       expect(result.every((d) => d.weekday == Weekday.mo), true);
     });
 
+    test(
+      'YEARLY with BYWEEKNO and BYDAY expands weekdays in selected weeks',
+      () {
+        final rrule = RecurrenceRule(
+          freq: RecurrenceFrequency.yearly,
+          byWeekNo: {1},
+          byDay: {ByDay(Weekday.mo), ByDay(Weekday.we)},
+        );
+        final filter = ByDayFilter(rrule);
+        final source = [CalDateTime.date(2024, 12, 30)]; // Week 1 of 2025
+        final result = filter.transform(source).toList();
+
+        expect(result.length, 2);
+        expect(result[0].toString(), '20241230'); // Monday
+        expect(result[1].toString(), '20250101'); // Wednesday
+      },
+    );
+
     test('YEARLY with BYYEARDAY limits instead of expanding', () {
       final rrule = RecurrenceRule(
         freq: RecurrenceFrequency.yearly,
