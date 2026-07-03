@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2026-07-03
+
+### Fixed
+- Include due-only VTODO items in occurrence queries by using DUE when DTSTART is missing.
+
 ## [1.0.8] - 2025-11-17
 
 ### Added
