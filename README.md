@@ -12,6 +12,7 @@ A Dart library for parsing and working with iCalendar (.ics) files. Built with R
 - [Installation](#installation)
 - [Usage](#usage)
   - [Basic Parsing](#basic-parsing)
+  - [Serializing Back to iCalendar](#serializing-back-to-icalendar)
   - [Working with Events](#working-with-events)
   - [Working with Timezones](#working-with-timezones)
   - [Recurring Events](#recurring-events)
@@ -70,6 +71,27 @@ final calendar = parser.parseFromString(ics);
 for (final event in calendar.events) {
   print('${event.summary}: ${event.dtstart}');
 }
+```
+
+### Serializing Back to iCalendar
+
+You can serialize both document-layer and semantic components back to iCalendar
+text using `toIcsString()`. The serializer emits CRLF line endings and
+applies RFC 5545 line folding by default.
+
+```dart
+final event = CalendarParser().parseComponentFromString<EventComponent>(
+  '''
+BEGIN:VEVENT
+UID:evt-1
+DTSTAMP:20250703T120000Z
+DTSTART:20250703T130000Z
+SUMMARY:Serialized event
+END:VEVENT''',
+);
+
+final ics = event.toIcsString();
+print(ics);
 ```
 
 ### Working with Events
