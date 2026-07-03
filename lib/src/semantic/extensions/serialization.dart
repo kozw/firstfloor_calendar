@@ -11,7 +11,7 @@ extension CalendarComponentSerialization on CalendarComponent {
   ///
   /// Output includes `BEGIN:<NAME>` and `END:<NAME>` wrapper lines, nested
   /// components, CRLF line endings, and optional RFC 5545 line folding.
-  String toICalendarString({bool foldLines = true}) {
+  String toIcsString({bool foldLines = true}) {
     final documentComponent = _toDocumentComponent(this);
     return serializeCalendarDocumentComponent(
       documentComponent,

@@ -31,14 +31,14 @@ extension CalendarDocumentSerialization on CalendarDocumentComponent {
   ///
   /// Output includes `BEGIN:<NAME>` and `END:<NAME>` wrapper lines, nested
   /// components, CRLF line endings, and optional RFC 5545 line folding.
-  String toICalendarString({bool foldLines = true}) {
+  String toIcsString({bool foldLines = true}) {
     return serializeCalendarDocumentComponent(this, foldLines: foldLines);
   }
 }
 
 extension CalendarPropertySerialization on CalendarProperty {
   /// Serializes this property into an iCalendar content line.
-  String toICalendarString({bool foldLine = true}) {
+  String toIcsString({bool foldLine = true}) {
     return serializeCalendarProperty(this, foldLine: foldLine);
   }
 }

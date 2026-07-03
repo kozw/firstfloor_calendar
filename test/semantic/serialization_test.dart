@@ -18,7 +18,7 @@ DTSTART;TZID=America/New_York:20250703T090000
 SUMMARY:Serialization test
 END:VEVENT''');
 
-      final serialized = component.toICalendarString();
+      final serialized = component.toIcsString();
       final reparsed = DocumentParser().parseComponent(serialized);
 
       expect(serialized, contains('BEGIN:VEVENT\r\n'));
@@ -43,7 +43,7 @@ SUMMARY:Calendar serialization
 END:VEVENT
 END:VCALENDAR''');
 
-      final serialized = calendar.toICalendarString();
+      final serialized = calendar.toIcsString();
       final reparsed = DocumentParser().parse(serialized);
 
       expect(reparsed.value('VERSION'), '2.0');

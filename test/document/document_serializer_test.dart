@@ -14,7 +14,7 @@ SUMMARY:Test Event
 END:VEVENT'''),
       );
 
-      final serialized = component.toICalendarString();
+      final serialized = component.toIcsString();
 
       expect(
         serialized,
@@ -39,7 +39,7 @@ END:VEVENT
         ],
       );
 
-      final serialized = component.toICalendarString();
+      final serialized = component.toIcsString();
       final reparsed = DocumentParser().parseComponent(serialized);
 
       expect(serialized, contains('\r\n '));
@@ -49,7 +49,7 @@ END:VEVENT
     test('can disable line folding for a single property', () {
       final property = CalendarProperty(name: 'DESCRIPTION', value: 'a' * 120);
 
-      final serialized = property.toICalendarString(foldLine: false);
+      final serialized = property.toIcsString(foldLine: false);
       expect(serialized, isNot(contains('\r\n ')));
     });
   });

@@ -76,7 +76,7 @@ for (final event in calendar.events) {
 ### Serializing Back to iCalendar
 
 You can serialize both document-layer and semantic components back to iCalendar
-text using `toICalendarString()`. The serializer emits CRLF line endings and
+text using `toIcsString()`. The serializer emits CRLF line endings and
 applies RFC 5545 line folding by default.
 
 ```dart
@@ -90,7 +90,7 @@ SUMMARY:Serialized event
 END:VEVENT''',
 );
 
-final ics = event.toICalendarString();
+final ics = event.toIcsString();
 print(ics);
 ```
 
