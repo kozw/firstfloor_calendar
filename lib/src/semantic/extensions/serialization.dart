@@ -1,5 +1,5 @@
 import '../../document/document.dart';
-import '../calendar.dart';
+import '../semantic.dart';
 
 /// Serialization helpers for semantic components.
 extension CalendarComponentSerialization on CalendarComponent {

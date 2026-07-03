@@ -15,7 +15,11 @@ String serializeCalendarDocumentComponent(
   return buffer.toString();
 }
 
-/// Serializes a [CalendarProperty] into a single iCalendar content line.
+/// Serializes a [CalendarProperty] into a single iCalendar content line body.
+///
+/// The returned string does not include a trailing CRLF line terminator.
+/// When [foldLine] is true, the content is folded to RFC 5545's 75-octet
+/// limit using CRLF + whitespace continuations.
 String serializeCalendarProperty(
   CalendarProperty property, {
   bool foldLine = true,
@@ -54,7 +58,6 @@ void _writeComponent(
     _writeLine(
       buffer,
       serializeCalendarProperty(property, foldLine: foldLines),
-      alreadyFolded: foldLines,
     );
   }
 
@@ -65,17 +68,7 @@ void _writeComponent(
   _writeLine(buffer, 'END:${component.name}');
 }
 
-void _writeLine(
-  StringBuffer buffer,
-  String line, {
-  bool alreadyFolded = false,
-}) {
-  if (alreadyFolded) {
-    buffer.write(line);
-    buffer.write('\r\n');
-    return;
-  }
-
+void _writeLine(StringBuffer buffer, String line) {
   buffer.write(line);
   buffer.write('\r\n');
 }

@@ -47,7 +47,10 @@ END:VEVENT
     });
 
     test('can disable line folding for a single property', () {
-      final property = CalendarProperty(name: 'DESCRIPTION', value: 'a' * 120);
+      final property = CalendarProperty(
+        name: 'DESCRIPTION',
+        value: List.filled(120, 'a').join(),
+      );
 
       final serialized = property.toIcsString(foldLine: false);
       expect(serialized, isNot(contains('\r\n ')));
