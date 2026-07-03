@@ -41,7 +41,11 @@ extension CalendarDocumentSerialization on CalendarDocumentComponent {
 }
 
 extension CalendarPropertySerialization on CalendarProperty {
-  /// Serializes this property into an iCalendar content line.
+  /// Serializes this property into an iCalendar content line body.
+  ///
+  /// The returned string does not include a trailing CRLF line terminator.
+  /// When [foldLine] is true, the content is folded to RFC 5545's 75-octet
+  /// limit using CRLF + whitespace continuations.
   String toIcsString({bool foldLine = true}) {
     return serializeCalendarProperty(this, foldLine: foldLine);
   }
