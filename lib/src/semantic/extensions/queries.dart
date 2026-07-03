@@ -99,7 +99,7 @@ extension TodoIterableQuery on Iterable<TodoComponent> {
   Iterable<TodoOccurrence> occurrences({CalDateTime? start, CalDateTime? end}) {
     return _OccurrenceIterator.occurrences<TodoComponent>(
       components: this,
-      ignore: (todo) => todo.dtstart == null,
+      ignore: (todo) => todo.dtstart == null && todo.due == null,
       occurrences: (todo) => todo.occurrences(start: start, end: end),
     ).map((e) => (occurrence: e.occurrence, todo: e.component));
   }

@@ -164,12 +164,13 @@ extension TodoComponentExtensions on TodoComponent {
   ///
   /// [start] and [end] can be provided to limit the occurrences.
   ///
-  /// Returns an empty iterable if the todo has no start date.
+  /// Returns an empty iterable if the todo has neither start nor due date.
   Iterable<CalDateTime> occurrences({CalDateTime? start, CalDateTime? end}) {
-    if (dtstart == null) return const Iterable<CalDateTime>.empty();
+    final startDate = dtstart ?? due;
+    if (startDate == null) return const Iterable<CalDateTime>.empty();
 
     final iterator = RecurrenceIterator(
-      dtstart: dtstart!,
+      dtstart: startDate,
       rrule: rrule,
       exdates: exdates,
       rdates: rdates,

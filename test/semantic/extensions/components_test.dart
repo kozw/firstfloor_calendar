@@ -491,12 +491,29 @@ void main() {
       expect(occurrences[1], CalDateTime.local(2025, 1, 2, 10, 0, 0));
     });
 
-    test('occurrences returns empty iterable when DTSTART is null', () {
-      // Create a todo without DTSTART property
-      final todo = TodoComponent(properties: {}, components: []);
+    test(
+      'occurrences returns empty iterable when DTSTART and DUE are null',
+      () {
+        final todo = TodoComponent(properties: {}, components: []);
+
+        final occurrences = todo.occurrences().toList();
+        expect(occurrences, isEmpty);
+      },
+    );
+
+    test('occurrences uses DUE when DTSTART is null', () {
+      final parser = CalendarParser();
+      final todo = parser.parseComponentFromString<TodoComponent>(
+        'BEGIN:VTODO\r\n'
+        'UID:test-todo-due-fallback\r\n'
+        'DTSTAMP:20250101T000000Z\r\n'
+        'DUE:20250115T140000\r\n'
+        'END:VTODO',
+      );
 
       final occurrences = todo.occurrences().toList();
-      expect(occurrences, isEmpty);
+      expect(occurrences.length, 1);
+      expect(occurrences[0], CalDateTime.local(2025, 1, 15, 14, 0, 0));
     });
 
     test('effectiveDuration returns duration when present', () {
