@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.10] - 2026-07-03
+
+### Fixed
+- Added support for `RDATE;VALUE=PERIOD` in recurrence iteration.
+- Expanded `BYDAY` correctly when `BYWEEKNO` is present in yearly recurrence rules.
+
 ## [1.0.9] - 2026-07-03
 
 ### Fixed
@@ -95,6 +101,9 @@ All notable changes to this project will be documented in this file.
 - Timezone-aware date/time handling
 - Two-layer architecture (document + semantic)
 
+[1.0.10]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.10
+[1.0.9]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.9
+[1.0.8]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.8
 [1.0.7]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.7
 [1.0.6]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.6
 [1.0.5]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.5
