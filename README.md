@@ -81,12 +81,13 @@ applies RFC 5545 line folding by default.
 
 ```dart
 final event = CalendarParser().parseComponentFromString<EventComponent>(
-  'BEGIN:VEVENT\r\n'
-  'UID:evt-1\r\n'
-  'DTSTAMP:20250703T120000Z\r\n'
-  'DTSTART:20250703T130000Z\r\n'
-  'SUMMARY:Serialized event\r\n'
-  'END:VEVENT',
+  '''
+BEGIN:VEVENT
+UID:evt-1
+DTSTAMP:20250703T120000Z
+DTSTART:20250703T130000Z
+SUMMARY:Serialized event
+END:VEVENT''',
 );
 
 final ics = event.toICalendarString();

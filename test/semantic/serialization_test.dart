@@ -10,14 +10,13 @@ void main() {
   group('Semantic serialization', () {
     test('serializes a semantic component back to iCalendar text', () {
       final component = CalendarParser()
-          .parseComponentFromString<EventComponent>(
-            'BEGIN:VEVENT\r\n'
-            'UID:evt-1\r\n'
-            'DTSTAMP:20250703T120000Z\r\n'
-            'DTSTART;TZID=America/New_York:20250703T090000\r\n'
-            'SUMMARY:Serialization test\r\n'
-            'END:VEVENT',
-          );
+          .parseComponentFromString<EventComponent>('''
+BEGIN:VEVENT
+UID:evt-1
+DTSTAMP:20250703T120000Z
+DTSTART;TZID=America/New_York:20250703T090000
+SUMMARY:Serialization test
+END:VEVENT''');
 
       final serialized = component.toICalendarString();
       final reparsed = DocumentParser().parseComponent(serialized);
@@ -32,18 +31,17 @@ void main() {
     });
 
     test('serializes a semantic calendar with nested components', () {
-      final calendar = CalendarParser().parseFromString(
-        'BEGIN:VCALENDAR\r\n'
-        'VERSION:2.0\r\n'
-        'PRODID:-//firstfloor//serialization//EN\r\n'
-        'BEGIN:VEVENT\r\n'
-        'UID:evt-2\r\n'
-        'DTSTAMP:20250703T120000Z\r\n'
-        'DTSTART:20250710T100000Z\r\n'
-        'SUMMARY:Calendar serialization\r\n'
-        'END:VEVENT\r\n'
-        'END:VCALENDAR',
-      );
+      final calendar = CalendarParser().parseFromString('''
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//firstfloor//serialization//EN
+BEGIN:VEVENT
+UID:evt-2
+DTSTAMP:20250703T120000Z
+DTSTART:20250710T100000Z
+SUMMARY:Calendar serialization
+END:VEVENT
+END:VCALENDAR''');
 
       final serialized = calendar.toICalendarString();
       final reparsed = DocumentParser().parse(serialized);

@@ -2,23 +2,28 @@ import 'package:firstfloor_calendar/firstfloor_calendar.dart';
 import 'package:test/test.dart';
 
 void main() {
+  String crlf(String value) => value.replaceAll('\n', '\r\n');
+
   group('Document serialization', () {
     test('serializes a simple component with CRLF line endings', () {
       final component = DocumentParser().parseComponent(
-        'BEGIN:VEVENT\r\n'
-        'UID:test-event\r\n'
-        'SUMMARY:Test Event\r\n'
-        'END:VEVENT',
+        crlf('''
+BEGIN:VEVENT
+UID:test-event
+SUMMARY:Test Event
+END:VEVENT'''),
       );
 
       final serialized = component.toICalendarString();
 
       expect(
         serialized,
-        'BEGIN:VEVENT\r\n'
-        'UID:test-event\r\n'
-        'SUMMARY:Test Event\r\n'
-        'END:VEVENT\r\n',
+        crlf('''
+BEGIN:VEVENT
+UID:test-event
+SUMMARY:Test Event
+END:VEVENT
+'''),
       );
     });
 
