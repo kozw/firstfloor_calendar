@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.11] - 2026-07-03
+
+### Added
+- Added first-class iCalendar serialization API for document and semantic components via `toIcsString()`.
+
+### Improved
+- Added broader date-time serialization test coverage (UTC, floating local, TZID, and VALUE=DATE).
+
 ## [1.0.10] - 2026-07-03
 
 ### Fixed
@@ -101,6 +109,7 @@ All notable changes to this project will be documented in this file.
 - Timezone-aware date/time handling
 - Two-layer architecture (document + semantic)
 
+[1.0.11]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.11
 [1.0.10]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.10
 [1.0.9]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.9
 [1.0.8]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.8
