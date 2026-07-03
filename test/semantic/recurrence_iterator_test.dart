@@ -691,6 +691,58 @@ void main() {
         ]);
       },
     );
+
+    test('RDATE with PERIOD explicit end is supported', () {
+      final dtstart = CalDateTime.local(2025, 1, 1, 10, 0, 0);
+      final rdates = [
+        RecurrenceDateTime.period(
+          Period.explicit(
+            start: CalDateTime.local(2025, 1, 6, 9, 0, 0),
+            end: CalDateTime.local(2025, 1, 6, 11, 0, 0),
+          ),
+        ),
+      ];
+      final iterator = RecurrenceIterator(dtstart: dtstart, rdates: rdates);
+
+      final actual = occurrences(iterator);
+      expect(actual, ['20250101T100000', '20250106T090000']);
+    });
+
+    test('RDATE with PERIOD duration is supported', () {
+      final dtstart = CalDateTime.local(2025, 1, 1, 10, 0, 0);
+      final rdates = [
+        RecurrenceDateTime.period(
+          Period.start(
+            start: CalDateTime.local(2025, 1, 5, 8, 0, 0),
+            duration: CalDuration(hours: 2),
+          ),
+        ),
+      ];
+      final iterator = RecurrenceIterator(dtstart: dtstart, rdates: rdates);
+
+      final actual = occurrences(iterator);
+      expect(actual, ['20250101T100000', '20250105T080000']);
+    });
+
+    test('RDATE PERIOD overlap uses period end for range filtering', () {
+      final dtstart = CalDateTime.local(2025, 1, 1, 10, 0, 0);
+      final rdates = [
+        RecurrenceDateTime.period(
+          Period.start(
+            start: CalDateTime.local(2025, 1, 5, 8, 0, 0),
+            duration: CalDuration(hours: 3),
+          ),
+        ),
+      ];
+      final iterator = RecurrenceIterator(dtstart: dtstart, rdates: rdates);
+
+      final actual = iterator
+          .occurrences(start: CalDateTime.local(2025, 1, 5, 10, 0, 0))
+          .map((e) => e.toString())
+          .toList();
+
+      expect(actual, ['20250105T080000']);
+    });
   });
 
   group('RecurrenceIterator - Edge Cases', () {

@@ -1,6 +1,13 @@
 import '../semantic.dart';
 import 'filters.dart';
 
+class _OccurrenceRange {
+  final CalDateTime start;
+  final CalDateTime? end;
+
+  const _OccurrenceRange({required this.start, this.end});
+}
+
 /// An iterator that generates occurrences based on the provided
 /// recurrence rule, start date, exclusions, and additional dates.
 class RecurrenceIterator {
@@ -71,23 +78,29 @@ class RecurrenceIterator {
     // This prevents memory leaks from storing all occurrences for infinite RRULEs.
     CalDateTime? lastYielded;
 
-    for (var o in _occurrences()) {
+    for (final occurrence in _occurrences()) {
+      final startOccurrence = occurrence.start;
+
       // Stop when past the range (crucial for infinite recurrences)
-      if (effectiveEnd != null && o.isAfter(effectiveEnd)) break;
+      if (effectiveEnd != null && startOccurrence.isAfter(effectiveEnd)) break;
 
       // Skip if excluded (EXDATE) or duplicate (same as last yielded)
-      if (exdateSet.contains(o)) continue;
-      if (lastYielded == o) continue;
+      if (exdateSet.contains(startOccurrence)) continue;
+      if (lastYielded == startOccurrence) continue;
 
       if (start != null) {
         // Skip occurrences before the range
-        // With duration: check for overlap
-        final occurrenceEnd = duration != null ? o.addDuration(duration) : o;
+        // With duration or period end: check for overlap
+        final occurrenceEnd =
+            occurrence.end ??
+            (duration != null
+                ? startOccurrence.addDuration(duration)
+                : startOccurrence);
         if (occurrenceEnd.isBefore(start)) continue;
       }
 
-      lastYielded = o;
-      yield o;
+      lastYielded = startOccurrence;
+      yield startOccurrence;
     }
   }
 
@@ -96,34 +109,36 @@ class RecurrenceIterator {
   ///
   /// This maintains lazy evaluation for potentially infinite recurrence rules
   /// while ensuring proper ordering.
-  Iterable<CalDateTime> _occurrences() sync* {
+  Iterable<_OccurrenceRange> _occurrences() sync* {
     // Pre-sort RDATEs (finite list) for chronological merging
-    final sortedRDates = <CalDateTime>[];
+    final sortedRDates = <_OccurrenceRange>[];
     if (rdates != null) {
       for (final rdate in rdates!) {
-        if (rdate.isPeriod) {
-          throw UnsupportedError(
-            'RDATE with PERIOD values is not yet supported. '
-            'Only RDATE with DATE-TIME values are currently supported.',
-          );
+        if (rdate.isDateTime) {
+          sortedRDates.add(_OccurrenceRange(start: rdate.dateTime!));
+          continue;
         }
-        sortedRDates.add(rdate.dateTime!);
+
+        final period = rdate.period!;
+        final periodEnd =
+            period.end ?? period.start.addDuration(period.duration!);
+        sortedRDates.add(_OccurrenceRange(start: period.start, end: periodEnd));
       }
-      sortedRDates.sort();
+      sortedRDates.sort((a, b) => a.start.compareTo(b.start));
     }
 
     var rdateIndex = 0;
 
     // Merge RRULE occurrences and RDATEs in chronological order
-    for (var o in _generate()) {
+    for (final o in _generate()) {
       // Yield all RDATEs that come before this RRULE occurrence
       while (rdateIndex < sortedRDates.length &&
-          sortedRDates[rdateIndex].isBefore(o)) {
+          sortedRDates[rdateIndex].start.isBefore(o)) {
         yield sortedRDates[rdateIndex++];
       }
 
       // Now yield the RRULE occurrence
-      yield o;
+      yield _OccurrenceRange(start: o);
     }
 
     // Yield any remaining RDATEs after all RRULE occurrences
