@@ -2673,7 +2673,7 @@ END:VTIMEZONE''');
       expect(timezones.length, 0);
     });
 
-    test('Components with null dtstart for todos are handled', () {
+    test('Todos without DTSTART use DUE for occurrences', () {
       final parser = CalendarParser();
 
       // Todo without DTSTART (use DUE instead)
@@ -2702,9 +2702,11 @@ END:VTODO''');
         validTodo,
       ].occurrences(start: start, end: end).toList();
 
-      // Only valid todo with dtstart should be included
-      expect(results.length, 1);
-      expect(results[0].todo.summary, 'Valid Todo');
+      expect(results.length, 2);
+      expect(results[0].todo.summary, 'No Start Time');
+      expect(results[0].occurrence, CalDateTime.local(2025, 1, 15, 10, 0, 0));
+      expect(results[1].todo.summary, 'Valid Todo');
+      expect(results[1].occurrence, CalDateTime.local(2025, 1, 15, 10, 0, 0));
     });
 
     test('Large number of components maintains order efficiently', () {
