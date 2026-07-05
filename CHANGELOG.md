@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.12] - 2026-07-05
+
+### Improved
+- Updated dependency constraints to support the latest `timezone` package release.
+
+### Fixed
+- Kept timezone-aware date-time parsing resilient when TZID aliases are unavailable in canonical timezone datasets.
+
 ## [1.0.11] - 2026-07-03
 
 ### Added
@@ -109,6 +117,7 @@ All notable changes to this project will be documented in this file.
 - Timezone-aware date/time handling
 - Two-layer architecture (document + semantic)
 
+[1.0.12]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.12
 [1.0.11]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.11
 [1.0.10]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.10
 [1.0.9]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.9
