@@ -26,6 +26,7 @@ A Dart library for parsing and working with iCalendar (.ics) files. Built with R
   - [Document Layer](#document-layer)
   - [Semantic Layer](#semantic-layer)
   - [Layer Interaction](#layer-interaction)
+- [Release Policy](#release-policy)
 - [License](#license)
 
 ## Features
@@ -398,6 +399,11 @@ final calendar = CalendarParser().parseFromString(ics);
 ```
 
 You can also bridge from document to semantic selectively using extension methods like `toEvent()`, `toTodo()`, etc.
+
+## Release Policy
+
+For maintainers, the release checklist and policy are documented in
+[`RELEASE.md`](RELEASE.md).
 
 ## License
 
