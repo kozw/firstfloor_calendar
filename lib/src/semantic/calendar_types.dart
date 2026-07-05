@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:collection/collection.dart';
-import 'package:timezone/standalone.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 import 'semantic.dart';
 
@@ -133,17 +133,15 @@ class CalDateTime implements Comparable<CalDateTime> {
          month,
          day,
          CalTime.local(hour, minute, second, tzid: tzid),
-         tzid != null
-             ? tz.TZDateTime(
-                 tz.getLocation(tzid),
-                 year,
-                 month,
-                 day,
-                 hour,
-                 minute,
-                 second,
-               )
-             : DateTime(year, month, day, hour, minute, second),
+         _buildNativeLocalDateTime(
+           year,
+           month,
+           day,
+           hour,
+           minute,
+           second,
+           tzid: tzid,
+         ),
        );
 
   /// Creates a DATE-TIME value with UTC time ('Z').
@@ -226,24 +224,16 @@ class CalDateTime implements Comparable<CalDateTime> {
     final newTzid = tzid ?? time!.tzid;
 
     // preserve the timezone information
-    final result = (newTzid != null)
-        ? tz.TZDateTime(
-            tz.getLocation(newTzid),
-            newYear,
-            newMonth,
-            newDay,
-            newHour,
-            newMinute,
-            newSecond,
-          )
-        : native.copyWith(
-            year: newYear,
-            month: newMonth,
-            day: newDay,
-            hour: newHour,
-            minute: newMinute,
-            second: newSecond,
-          );
+    final result = _buildNativeLocalDateTime(
+      newYear,
+      newMonth,
+      newDay,
+      newHour,
+      newMinute,
+      newSecond,
+      tzid: newTzid,
+      fallback: native,
+    );
 
     return CalDateTime._(
       result.year,
@@ -291,6 +281,55 @@ class CalDateTime implements Comparable<CalDateTime> {
         '${day.toString().padLeft(2, '0')}';
 
     return time != null ? '${date}T${time.toString()}' : date;
+  }
+
+  static DateTime _buildNativeLocalDateTime(
+    int year,
+    int month,
+    int day,
+    int hour,
+    int minute,
+    int second, {
+    String? tzid,
+    DateTime? fallback,
+  }) {
+    if (tzid == null) {
+      if (fallback == null) {
+        return DateTime(year, month, day, hour, minute, second);
+      }
+      return fallback.copyWith(
+        year: year,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second,
+      );
+    }
+
+    try {
+      return tz.TZDateTime(
+        tz.getLocation(tzid),
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+      );
+    } on tz.LocationNotFoundException {
+      if (fallback == null) {
+        return DateTime(year, month, day, hour, minute, second);
+      }
+      return fallback.copyWith(
+        year: year,
+        month: month,
+        day: day,
+        hour: hour,
+        minute: minute,
+        second: second,
+      );
+    }
   }
 }
 
