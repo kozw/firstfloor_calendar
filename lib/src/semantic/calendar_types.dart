@@ -836,11 +836,21 @@ class Trigger {
   /// The date-time value, if specified.
   final CalDateTime? dateTime;
 
+  /// The RELATED parameter as enum value, if explicitly set.
+  final TriggerRelated? related;
+
+  /// The RELATED parameter as raw string, if explicitly set.
+  final String? relatedName;
+
   /// Creates a Trigger with a DURATION.
-  const Trigger.duration(CalDuration this.duration) : dateTime = null;
+  const Trigger.duration(
+    CalDuration this.duration, {
+    this.related,
+    this.relatedName,
+  }) : dateTime = null;
 
   /// Creates a Trigger with a UTC DATE-TIME.
-  Trigger.dateTime(CalDateTime this.dateTime)
+  Trigger.dateTime(CalDateTime this.dateTime, {this.related, this.relatedName})
     : duration = null,
       assert(dateTime.isDateTime, 'time part must be present'),
       assert(dateTime.time!.isUtc);
@@ -857,12 +867,14 @@ class Trigger {
 
     return other is Trigger &&
         other.duration == duration &&
-        other.dateTime == dateTime;
+        other.dateTime == dateTime &&
+        other.related == related &&
+        other.relatedName == relatedName;
   }
 
   @override
   int get hashCode {
-    return Object.hash(duration, dateTime);
+    return Object.hash(duration, dateTime, related, relatedName);
   }
 
   @override

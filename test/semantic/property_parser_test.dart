@@ -529,6 +529,53 @@ void main() {
       expect(trigger.dateTime, CalDateTime.utc(1998, 1, 1, 12, 0, 0));
     });
 
+    test('Parse TRIGGER with RELATED=END', () {
+      final property = DocumentParser.parseProperty(
+        'TRIGGER;RELATED=END:-PT15M',
+      );
+      final trigger = parseTrigger(property);
+      expect(trigger.duration, CalDuration(sign: Sign.negative, minutes: 15));
+      expect(trigger.related, TriggerRelated.end);
+      expect(trigger.relatedName, 'END');
+    });
+
+    test('Parse TRIGGER with invalid RELATED value throws', () {
+      final property = DocumentParser.parseProperty(
+        'TRIGGER;RELATED=INVALID:-PT15M',
+      );
+      expect(
+        () => parseTrigger(property),
+        throwsA(
+          isA<ParseException>().having(
+            (e) => e.message,
+            'message',
+            'Invalid RELATED value "INVALID" for property "TRIGGER"',
+          ),
+        ),
+      );
+    });
+
+    test('Parse TRIGGER with multiple RELATED parameters throws', () {
+      final property = CalendarProperty(
+        name: 'TRIGGER',
+        value: '-PT15M',
+        parameters: {
+          'RELATED': ['START', 'END'],
+        },
+        lineNumber: 1,
+      );
+      expect(
+        () => parseTrigger(property),
+        throwsA(
+          isA<ParseException>().having(
+            (e) => e.message,
+            'message',
+            'Multiple RELATED parameters found for property "TRIGGER"',
+          ),
+        ),
+      );
+    });
+
     test('Parse TRIGGER with invalid VALUE type throws', () {
       final property = DocumentParser.parseProperty(
         'TRIGGER;VALUE=TEXT:invalid',

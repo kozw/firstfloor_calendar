@@ -339,14 +339,34 @@ CalTime parseCalTimeValue(String value, {String? tzid, int lineNumber = 0}) {
 
 /// Parses a [CalendarProperty] into a trigger value.
 Trigger parseTrigger(CalendarProperty property) {
+  final relatedName = _tryParseSingleParameterValue(
+    property,
+    parameterName: 'RELATED',
+  );
+  final related = relatedName != null
+      ? TriggerRelatedNames.tryParse(relatedName) ??
+            (throw ParseException(
+              'Invalid RELATED value "$relatedName" for property "${property.name}"',
+              lineNumber: property.lineNumber,
+            ))
+      : null;
+
   final valueType =
       property.parameters['VALUE']?.first ?? ValueTypeNames.duration;
   if (valueType == ValueTypeNames.duration) {
     final duration = parseCalDuration(property);
-    return Trigger.duration(duration);
+    return Trigger.duration(
+      duration,
+      related: related,
+      relatedName: relatedName,
+    );
   } else if (valueType == ValueTypeNames.dateTime) {
     final dateTime = parseCalDateTimeUtc(property);
-    return Trigger.dateTime(dateTime);
+    return Trigger.dateTime(
+      dateTime,
+      related: related,
+      relatedName: relatedName,
+    );
   }
   throw ParseException(
     'Invalid value type "$valueType" for property "${property.name}"',
@@ -376,14 +396,21 @@ UtcOffset parseUtcOffset(CalendarProperty property) {
 }
 
 String? _tryParseTzidParameter(CalendarProperty property) {
-  final tzidList = property.parameters['TZID'];
-  if (tzidList != null && tzidList.length > 1) {
+  return _tryParseSingleParameterValue(property, parameterName: 'TZID');
+}
+
+String? _tryParseSingleParameterValue(
+  CalendarProperty property, {
+  required String parameterName,
+}) {
+  final values = property.parameters[parameterName];
+  if (values != null && values.length > 1) {
     throw ParseException(
-      'Multiple TZID parameters found for property "${property.name}"',
+      'Multiple $parameterName parameters found for property "${property.name}"',
       lineNumber: property.lineNumber,
     );
   }
-  return tzidList?.firstOrNull;
+  return values?.firstOrNull;
 }
 
 String _parseTextString(String value) {
