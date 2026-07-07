@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.13] - 2026-07-07
+
+### Added
+- Added first-class support for `TRIGGER;RELATED` metadata through `Trigger.related` and `Trigger.relatedName`.
+
+### Fixed
+- Enforced stricter TRIGGER parameter validation for duplicate `VALUE` and invalid `RELATED` usage with `DATE-TIME`.
+
 ## [1.0.12] - 2026-07-05
 
 ### Improved
@@ -117,6 +125,7 @@ All notable changes to this project will be documented in this file.
 - Timezone-aware date/time handling
 - Two-layer architecture (document + semantic)
 
+[1.0.13]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.13
 [1.0.12]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.12
 [1.0.11]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.11
 [1.0.10]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.10
