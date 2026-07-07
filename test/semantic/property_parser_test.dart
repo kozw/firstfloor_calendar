@@ -555,6 +555,43 @@ void main() {
       );
     });
 
+    test('Parse TRIGGER with RELATED and DATE-TIME throws', () {
+      final property = DocumentParser.parseProperty(
+        'TRIGGER;RELATED=END;VALUE=DATE-TIME:19980101T120000Z',
+      );
+      expect(
+        () => parseTrigger(property),
+        throwsA(
+          isA<ParseException>().having(
+            (e) => e.message,
+            'message',
+            'RELATED parameter is only valid for DURATION trigger values',
+          ),
+        ),
+      );
+    });
+
+    test('Parse TRIGGER with multiple VALUE parameters throws', () {
+      final property = CalendarProperty(
+        name: 'TRIGGER',
+        value: '-PT15M',
+        parameters: {
+          'VALUE': ['DURATION', 'DATE-TIME'],
+        },
+        lineNumber: 1,
+      );
+      expect(
+        () => parseTrigger(property),
+        throwsA(
+          isA<ParseException>().having(
+            (e) => e.message,
+            'message',
+            'Multiple VALUE parameters found for property "TRIGGER"',
+          ),
+        ),
+      );
+    });
+
     test('Parse TRIGGER with multiple RELATED parameters throws', () {
       final property = CalendarProperty(
         name: 'TRIGGER',

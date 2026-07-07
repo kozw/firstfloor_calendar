@@ -352,7 +352,8 @@ Trigger parseTrigger(CalendarProperty property) {
       : null;
 
   final valueType =
-      property.parameters['VALUE']?.first ?? ValueTypeNames.duration;
+      _tryParseSingleParameterValue(property, parameterName: 'VALUE') ??
+      ValueTypeNames.duration;
   if (valueType == ValueTypeNames.duration) {
     final duration = parseCalDuration(property);
     return Trigger.duration(
@@ -361,6 +362,13 @@ Trigger parseTrigger(CalendarProperty property) {
       relatedName: relatedName,
     );
   } else if (valueType == ValueTypeNames.dateTime) {
+    if (relatedName != null) {
+      throw ParseException(
+        'RELATED parameter is only valid for DURATION trigger values',
+        lineNumber: property.lineNumber,
+      );
+    }
+
     final dateTime = parseCalDateTimeUtc(property);
     return Trigger.dateTime(
       dateTime,
