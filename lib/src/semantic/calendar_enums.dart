@@ -596,6 +596,42 @@ extension TodoStatusExtensions on TodoStatus {
   };
 }
 
+/// Trigger relation types.
+enum TriggerRelated { start, end }
+
+/// Names for [TriggerRelated] enum values
+class TriggerRelatedNames {
+  /// The private constructor to prevent instantiation.
+  TriggerRelatedNames._();
+
+  /// The name for trigger relation to START.
+  static const start = 'START';
+
+  /// The name for trigger relation to END.
+  static const end = 'END';
+
+  /// Tries to parse the given string into a TriggerRelated enum value.
+  static TriggerRelated? tryParse(String s) {
+    switch (s.toUpperCase()) {
+      case start:
+        return TriggerRelated.start;
+      case end:
+        return TriggerRelated.end;
+      default:
+        return null;
+    }
+  }
+}
+
+/// Extensions for [TriggerRelated] enum.
+extension TriggerRelatedExtensions on TriggerRelated {
+  /// Converts the enum value to its corresponding string name.
+  String toName() => switch (this) {
+    TriggerRelated.start => TriggerRelatedNames.start,
+    TriggerRelated.end => TriggerRelatedNames.end,
+  };
+}
+
 /// Value types.
 enum ValueType {
   binary,

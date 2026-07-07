@@ -419,6 +419,17 @@ void main() {
 
       expect(trigger.toString(), equals('20250101T100000Z'));
     });
+
+    test('stores RELATED parameter metadata', () {
+      final trigger = Trigger.duration(
+        CalDuration(minutes: 15),
+        related: TriggerRelated.end,
+        relatedName: 'END',
+      );
+
+      expect(trigger.related, TriggerRelated.end);
+      expect(trigger.relatedName, 'END');
+    });
   });
 
   group('UtcOffset', () {

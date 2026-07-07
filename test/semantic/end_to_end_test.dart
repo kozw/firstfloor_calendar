@@ -785,6 +785,8 @@ void main() {
       );
 
       expect(alarm.trigger.duration, CalDuration(sign: Sign.negative, days: 2));
+      expect(alarm.trigger.related, TriggerRelated.end);
+      expect(alarm.trigger.relatedName, 'END');
       expect(alarm.action, AlarmAction.email);
       expect(alarm.attendees, isNotEmpty);
       expect(alarm.attendees.first.address, 'mailto:john_doe@example.com');
