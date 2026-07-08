@@ -105,7 +105,3 @@ final calendar = CalendarParser().parseFromString(ics);
 - **Recurrence**: `RecurrenceIterator` has `maxIterations` safeguard (default 10000) for infinite rules
 - **Lazy evaluation**: `occurrences()` returns `Iterable` (lazy) - use `.take()` to limit infinite series
 - **Chronological ordering**: Query extensions auto-sort results regardless of source order
-
-### Known Limitations
-- **BYDAY + BYWEEKNO**: `ByDayFilter` in `lib/src/semantic/recurrence/filters.dart` does not yet expand BYDAY when BYWEEKNO is present (see TODO at line 227)
-- **RDATE with PERIOD**: `RecurrenceIterator` only supports DATE-TIME values in RDATE, not PERIOD values (throws `UnsupportedError` at line 105)
