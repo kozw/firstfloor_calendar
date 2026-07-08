@@ -10,7 +10,9 @@ A Dart library for parsing and working with iCalendar (.ics) files. Built with R
 
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
+- [Quick Start](#quick-start)
+- [Choose a Parsing Approach](#choose-a-parsing-approach)
+- [Core Usage Patterns](#core-usage-patterns)
   - [Basic Parsing](#basic-parsing)
   - [Serializing Back to iCalendar](#serializing-back-to-icalendar)
   - [Working with Events](#working-with-events)
@@ -19,13 +21,17 @@ A Dart library for parsing and working with iCalendar (.ics) files. Built with R
   - [Filtering Events by Date Range](#filtering-events-by-date-range)
   - [Getting All Occurrences](#getting-all-occurrences)
   - [Chronological Ordering Across Multiple Events](#chronological-ordering-across-multiple-events)
+- [Advanced Usage](#advanced-usage)
   - [Streaming Large Files](#streaming-large-files)
   - [Conditional Parsing with Stream Parser](#conditional-parsing-with-stream-parser)
   - [Custom Property Parsers](#custom-property-parsers)
+- [Common Gotchas](#common-gotchas)
 - [Architecture](#architecture)
   - [Document Layer](#document-layer)
   - [Semantic Layer](#semantic-layer)
   - [Layer Interaction](#layer-interaction)
+- [API Reference](#api-reference)
+- [Contributing](#contributing)
 - [Release Policy](#release-policy)
 - [License](#license)
 
@@ -41,10 +47,42 @@ A Dart library for parsing and working with iCalendar (.ics) files. Built with R
 
 ```yaml
 dependencies:
-  firstfloor_calendar: ^1.0.0
+  firstfloor_calendar: ^1.0.13
 ```
 
-## Usage
+## Quick Start
+
+Use the semantic parser for most apps:
+
+```dart
+import 'package:firstfloor_calendar/firstfloor_calendar.dart';
+
+final calendar = CalendarParser().parseFromString('''
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example//EN
+BEGIN:VEVENT
+UID:event-123@example.com
+DTSTAMP:20240315T090000Z
+DTSTART:20240315T100000Z
+SUMMARY:Team Meeting
+END:VEVENT
+END:VCALENDAR''');
+
+print(calendar.events.first.summary); // Team Meeting
+```
+
+## Choose a Parsing Approach
+
+| Use case | Recommended API |
+| --- | --- |
+| Parse complete calendars into typed models | `CalendarParser().parseFromString(...)` |
+| Parse one semantic component from raw text | `CalendarParser().parseComponentFromString<T>(...)` |
+| Work with raw properties/components | `DocumentParser().parse(...)` |
+| Process very large files incrementally | `DocumentStreamParser().parseComponents(...)` |
+| Query date-range occurrences across many events/todos | `calendar.events.occurrences(...)`, `calendar.todos.occurrences(...)` |
+
+## Core Usage Patterns
 
 ### Basic Parsing
 
@@ -164,7 +202,9 @@ if (event.dtstart?.native is tz.TZDateTime) {
 
 ### Recurring Events
 
-Generate occurrences from recurrence rules (RRULE). The `occurrences()` method returns a lazy stream that handles both recurring and non-recurring events gracefully.
+Generate occurrences from recurrence rules (RRULE). The `occurrences()`
+method returns a lazy iterable that handles both recurring and
+non-recurring events gracefully.
 
 ```dart
 final event = calendar.events.first;
@@ -262,6 +302,8 @@ for (final result in calendar.events.occurrences(
 // 2024-03-15 14:00:00: Afternoon Meeting
 ```
 
+## Advanced Usage
+
 ### Streaming Large Files
 
 Parse large iCalendar files efficiently using the streaming parser. Components are processed one at a time without loading the entire file into memory.
@@ -301,7 +343,7 @@ await for (final component in streamParser.parseComponents(file.openRead())) {
         .where((p) => p.name == 'STATUS')
         .firstOrNull
         ?.value;
-    
+
     // Only convert confirmed events to typed models
     if (status == 'CONFIRMED') {
       final event = component.toEvent();
@@ -343,6 +385,17 @@ parser.registerPropertyRule(
 final calendar = parser.parseFromString(ics);
 final priority = calendar.events.first.value<int>('X-CUSTOM-PRIORITY');
 ```
+
+## Common Gotchas
+
+- Initialize timezone data before parsing timezone-aware calendars:
+  `tz.initializeTimeZones()`.
+- Recurrence expansion is lazy; for potentially unbounded rules, use
+  `.take(n)` or pass an `end` boundary.
+- `CalDateTime.date(...)` is a DATE value (all-day), while
+  `CalDateTime.local(...)` / `CalDateTime.utc(...)` are DATE-TIME values.
+- Prefer `DocumentStreamParser` over full in-memory parsing when reading
+  very large `.ics` files.
 
 ## Architecture
 
@@ -399,6 +452,22 @@ final calendar = CalendarParser().parseFromString(ics);
 ```
 
 You can also bridge from document to semantic selectively using extension methods like `toEvent()`, `toTodo()`, etc.
+
+## API Reference
+
+- Package docs: <https://pub.dev/documentation/firstfloor_calendar/latest/>
+- Library entry point:
+  <https://pub.dev/documentation/firstfloor_calendar/latest/firstfloor_calendar/>
+
+## Contributing
+
+Run these checks before opening a PR:
+
+```bash
+dart format --set-exit-if-changed .
+dart analyze --fatal-infos
+dart test
+```
 
 ## Release Policy
 
