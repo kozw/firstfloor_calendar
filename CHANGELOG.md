@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.14] - 2026-07-15
+
+### Fixed
+- Fixed `CalDuration.toString()` zero-length serialization to emit valid ISO 8601 (`PT0S` / `-PT0S`) for reliable round-tripping.
+
 ## [1.0.13] - 2026-07-07
 
 ### Added
@@ -125,6 +130,7 @@ All notable changes to this project will be documented in this file.
 - Timezone-aware date/time handling
 - Two-layer architecture (document + semantic)
 
+[1.0.14]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.14
 [1.0.13]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.13
 [1.0.12]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.12
 [1.0.11]: https://github.com/firstfloorsoftware/firstfloor_calendar/releases/tag/v1.0.11

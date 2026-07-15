@@ -176,7 +176,9 @@ void main() {
 
     test('zero duration roundtrips through serialization', () {
       final dur = CalDuration();
-      final property = DocumentParser.parseProperty('DURATION:${dur.toString()}');
+      final property = DocumentParser.parseProperty(
+        'DURATION:${dur.toString()}',
+      );
       final parsed = parseCalDuration(property);
       expect(parsed, equals(dur));
     });
