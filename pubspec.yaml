@@ -1,6 +1,6 @@
 name: firstfloor_calendar
 description: RFC 5545 compliant iCalendar (.ics) parser for Dart and Flutter.
-version: 1.0.13
+version: 1.0.14
 repository: https://github.com/firstfloorsoftware/firstfloor_calendar
 topics:
   - icalendar
