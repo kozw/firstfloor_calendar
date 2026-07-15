@@ -163,6 +163,23 @@ void main() {
       final dur = CalDuration(weeks: 2);
       expect(dur.toString(), equals('P2W'));
     });
+
+    test('toString with zero duration', () {
+      final dur = CalDuration();
+      expect(dur.toString(), equals('PT0S'));
+    });
+
+    test('toString with zero negative duration', () {
+      final dur = CalDuration(sign: Sign.negative);
+      expect(dur.toString(), equals('-PT0S'));
+    });
+
+    test('zero duration roundtrips through serialization', () {
+      final dur = CalDuration();
+      final property = DocumentParser.parseProperty('DURATION:${dur.toString()}');
+      final parsed = parseCalDuration(property);
+      expect(parsed, equals(dur));
+    });
   });
 
   group('CalTime', () {

@@ -385,6 +385,9 @@ class CalDuration {
   @override
   String toString() {
     final signStr = sign == Sign.positive ? '' : '-';
+    if (weeks == 0 && days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
+      return '${signStr}PT0S';
+    }
     final weeksStr = weeks != 0 ? '${weeks}W' : '';
     final daysStr = days != 0 ? '${days}D' : '';
     final hoursStr = hours != 0 ? '${hours}H' : '';
